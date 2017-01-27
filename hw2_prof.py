@@ -55,24 +55,29 @@ def split_names(fio):
         middlename = ''    
     return surname, name, middlename
     
-def teachers_with_xpath(page): #email и должности тут сделать не получилось
+def teachers_with_xpath(page):
     from lxml import html
     tree = html.fromstring(page.content)
     professors = []
     posts = len(tree.xpath('/html/body/div[1]/div[4]/div[2]/div[2]/div/div[3]/div[2]/div'))
     for i in range(posts):
+        fio = tree.xpath('string(/html/body/div[1]/div[4]/div[2]/div[2]/div/div[3]/div[2]/div[' + str(i+1) + ']/div//div[@title]/@title)')        
+        surname, name, middlename = split_names(fio)        
         phone1 = tree.xpath('/html/body/div[1]/div[4]/div[2]/div[2]/div/div[3]/div[2]/div[' + str(i+1) + ']/div/div[1]/span/text()')
         phone = []
         for p in phone1:
             phone.append(p.encode('cp866', errors='replace').decode('cp866'))
-        #email = get_email(tree.xpath('string(/html/body/div[1]/div[4]/div[2]/div[2]/div/div[3]/div[2]/div[' + str(i+1) + ']/div/div[1]/a[@class="link"]/@data-at)'))
-        fio = tree.xpath('/html/body/div[1]/div[4]/div[2]/div[2]/div/div[3]/div[2]/div[' + str(i+1) + ']/div/div[2]//text()')        
-        if len(fio) >= 4:
-            surname, name, middlename = split_names(fio[4])
-        #pos = tree.xpath('/html/body/div[1]/div[4]/div[2]/div[2]/div/div[3]/div[2]/div[' + str(i+1) + ']/div/div[2]/div/p/span/text()')
-        #if len(pos) >= 1:
-        professors.append(Professor(surname, name, middlename, phone))
-    return professors          
+        pos = tree.xpath('/html/body/div[1]/div[4]/div[2]/div[2]/div/div[3]/div[2]/div[' + str(i+1) + ']//p//span/text()[1]')
+        position = {}
+        for j in range(len(pos)):
+            place = tree.xpath('/html/body/div[1]/div[4]/div[2]/div[2]/div/div[3]/div[2]/div[' + str(i+1) + ']//p//span[' + str(j+1) + ']/a/text()')
+            for pl in place:
+                position[pl.encode('cp866', errors='replace').decode('cp866')] = pos[j].strip().encode('cp866', errors='replace').decode('cp866').strip(':')
+        email = tree.xpath('/html/body/div[1]/div[4]/div[2]/div[2]/div/div[3]/div[2]/div[' + str(i+1) + ']//a[@data-at]/@data-at')
+        for k in range(len(email)):
+            email[k] = get_email(email[k])       
+        professors.append(Professor(surname, name, middlename, phone, email, position))
+    return professors               
         
 
 page = requests.get('https://www.hse.ru/org/persons/?ltr=%D0%A1;udept=22726')
