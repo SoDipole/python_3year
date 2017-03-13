@@ -1,3 +1,6 @@
+import os, itertools
+from collections import Counter
+
 def file_to_list(file_name):
     """Read a text file and create a list containing lines from the file.
     Args:
@@ -5,7 +8,6 @@ def file_to_list(file_name):
     Returns:
         List of lines.
     """
-    import os
     fr = open(file_name, encoding = 'utf-8')
     l = [line.strip() for line in fr]
     fr.close()
@@ -24,7 +26,6 @@ def get_main_words(idioms_set):
     Returns:
         List of main words.
     """
-    from collections import Counter
     main_words = Counter([idiom.split()[-1] for idiom in idioms_set])
     print('main words:', '\n', main_words)
     print('top 50 main words:', '\n', main_words.most_common(50))    
@@ -38,7 +39,6 @@ def get_power_expressions(idioms_set):
     Returns:
         List of power expressions.
     """
-    from collections import Counter
     power_expressions = Counter([' '.join(idiom.split()[:-1]) for idiom in idioms_set])
     print('power expressions:', '\n', power_expressions)
     print('top 50 power expressions:', '\n', power_expressions.most_common(50))    
@@ -60,7 +60,6 @@ def get_all_pairs(idioms_set, power_expressions, main_words):
     Returns:
         List of all pairs.
     """
-    import itertools
     print('getting all pairs...')
     all_pairs = [' '.join(pair) for pair in list(itertools.product(power_expressions, main_words)) if ' '.join(pair) not in idioms_set]
     list_to_file(all_pairs, 'all_pairs.txt')
@@ -75,7 +74,6 @@ def get_best_endings(idioms_set, main_words):
     Returns:
         Dictionary {main word: best ending}.
     """
-    from collections import Counter
     best_endings = {}
     for word in main_words:
         endings = Counter([' '.join(idiom.split()[:-1])[-2:] for idiom in idioms_set if idiom.split()[-1] == word])
@@ -93,7 +91,6 @@ def get_good_pairs(idioms_set, power_expressions, main_words, all_pairs):
     Returns:
         List of good pairs.
     """
-    import itertools
     print('getting good pairs...')
     best_endings = get_best_endings(idioms_set, main_words)
     good_pairs = [pair for pair in all_pairs if best_endings[pair.split()[-1]] == pair.split()[-2][-2:]]
