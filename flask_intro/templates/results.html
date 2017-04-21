@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Кошки Собаки</title>
+	<link href={{ url_for('static', filename='style1.css') }} rel="stylesheet">
+</head>
+<body>
+	<div class="main">
+		<div class="content">
+			<br>Проголосовали за
+			<br>кошек: {{ cats }}
+			<br>собак: {{ dogs }}
+			<br>
+			<br>Проголосовавшие:
+			{% for name in names %}
+				<br>{{ name }}
+			{% endfor %}
+		</div>
+	</div>
+</body>
+</html>
