@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Кошки Собаки</title>
+	<link href={{ url_for('static', filename='style1.css') }} rel="stylesheet">
+</head>
+<body>
+	<div class="menu">
+		<div class="btn-group">
+			<a href={{ url_for('index') }} class="button2">главная</a>
+			<a href={{ url_for('text') }} class="active">анализ текста</a>
+		</div>
+	</div>
+	<div class="main">
+		<div class="content">
+			<form method='post'>
+				<h2>Ваш текст:</h2>
+				<textarea rows="4" cols="50" name="text">{{ input }}</textarea>
+				<br>
+				<input class='button' type="submit" value="Разобрать">
+			</form>
+		</div>
+	</div>
+</body>
+</html>
