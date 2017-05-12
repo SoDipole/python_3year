@@ -2,20 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Кошки Собаки</title>
+    <title>Главная страница</title>
 	<link href={{ url_for('static', filename='style1.css') }} rel="stylesheet">
 </head>
 <body>
 	<div class="menu">
 		<div class="btn-group">
 			<a href={{ url_for('index') }} class="active">главная</a>
-			<a href={{ url_for('text') }} class="button2">анализ текста</a>
+			<a href={{ url_for('text') }} class="button2">анализ глаголов в тексте</a>
+			<a class="button2">VK API</a>
 		</div>
 	</div>
 	<div class="main">
 		<div class="content">
 			Автор сайта: Полина Сонина (группа 141)
-			<br><br><i><a class="button" href = "https://github.com/SoDipole/python_3year" target="_blank">Проект на GitHub</a></i>
+			<br><br><i><a class="button" href = "https://github.com/SoDipole/python_3year/tree/master/flask_project" target="_blank">Проект на GitHub</a></i>
 		</div>
 	</div>
 </body>

@@ -2,24 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Кошки Собаки</title>
+    <title>Анализ глаголов</title>
 	<link href={{ url_for('static', filename='style1.css') }} rel="stylesheet">
 </head>
 <body>
 	<div class="menu">
 		<div class="btn-group">
 			<a href={{ url_for('index') }} class="button2">главная</a>
-			<a href={{ url_for('text') }} class="active">анализ текста</a>
+			<a href={{ url_for('text') }} class="active">анализ глаголов в тексте</a>
+			<a class="button2">VK API</a>
 		</div>
 	</div>
 	<div class="main">
 		<div class="content">
 			<form method='post'>
 				<h2>Ваш текст:</h2>
-				<textarea rows="4" cols="50" name="text">{{ input }}</textarea>
+				<textarea rows="5" cols="80" name="text">{{ input }}</textarea>
 				<br>
+				<input class='button' type='reset' value='Очистить'>
 				<input class='button' type="submit" value="Разобрать">
 			</form>
+		</div>
+		<div class="content">
+			{% if num_verbs%}
+				{% if num_verbs == 0 %}
+					В тексте нет глаголов.
+				{% endif %}
+				{% if num_verbs > 0 %}
+					<h2>Анализ глаголов в тексте:</h2>
+					<p>
+						Всего глаголов:  {{ num_verbs }} ( {{ part_verbs }}% )
+						<br>
+						<br>Переходных глаголов:  {{ tr_verbs }}
+						<br>Непереходных глаголов: {{ intr_verbs }}
+						<br>
+						<br>Глаголов совершенного вида:  {{ pf_verbs }}
+						<br>Глаголов несовершенного вида: {{ impf_verbs }}
+					</p>
+					<h3>Список лемм глаголов:</h3>
+					<ul>
+						{% for verb in verbs %}
+							<li>{{ verb }}</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			{% endif %}
 		</div>
 	</div>
 </body>
