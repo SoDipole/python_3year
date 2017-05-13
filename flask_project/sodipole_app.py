@@ -32,7 +32,7 @@ def analyse_verbs(text):
                     else:
                         pf_verbs += 1
     if words > 0:
-        part_verbs = round(num_verbs/words, 2)
+        part_verbs = round(num_verbs*100/words, 2)
     verbs = sorted(verbs, key=verbs.__getitem__, reverse=True)
     return verbs, num_verbs, part_verbs, tr_verbs, intr_verbs, pf_verbs, impf_verbs
 
