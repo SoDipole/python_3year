@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import url_for, render_template, request
 from pymystem3 import Mystem
-import re
+import re, requests, json
 
 app = Flask(__name__)
 m = Mystem()
@@ -36,6 +36,29 @@ def analyse_verbs(text):
     verbs = sorted(verbs, key=verbs.__getitem__, reverse=True)
     return verbs, num_verbs, part_verbs, tr_verbs, intr_verbs, pf_verbs, impf_verbs
 
+def vk_api(method, **kwargs):
+    api_request = 'https://api.vk.com/method/'+method + '?'
+    api_request += '&'.join(['{}={}'.format(key, kwargs[key]) for key in kwargs])
+    return json.loads(requests.get(api_request).text)
+
+def get_lemmas_vk(group_id):
+    lemmas = {}
+    posts = vk_api('wall.get', domain = group_id, count = 100)['response']
+    for i in range(1,len(posts)):
+        if posts[i]['text']:
+            ana = m.analyze(posts[i]['text'])
+            for item in ana:
+                if len(item) > 1 and len(item['analysis']) > 0:
+                    lemm = item['analysis'][0]['lex']
+                    if lemm in lemmas:
+                        lemmas[lemm] += 1
+                    else:
+                        lemmas[lemm] = 1
+    lemmas = sorted(lemmas, key=lemmas.__getitem__, reverse=True)
+    if len(lemmas) > 100:
+        lemmas = lemmas[:100]
+    return lemmas
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -50,6 +73,17 @@ def text():
                                tr_verbs = tr_verbs, intr_verbs = intr_verbs, 
                                pf_verbs = pf_verbs, impf_verbs = impf_verbs)
     return render_template('text.html')
+
+@app.route('/apivk', methods = ['POST', 'GET'])
+def apivk():
+    if request.form:
+        group_id = request.form['group_id']
+        is_closed = vk_api('groups.getById', group_id = group_id)['response'][0]['is_closed']
+        if is_closed == 1:
+            return render_template('apivk.html', is_closed = is_closed)
+        lemmas = get_lemmas_vk(group_id)
+        return render_template('apivk.html', lemmas = lemmas)
+    return render_template('apivk.html')
 
 if __name__ == '__main__':
     app.run()

@@ -133,7 +133,7 @@ input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px #9874AA inset;
 }
 input[name='q'], input[name='text'] {
-	width: 150px;
+	width: 170px;
 	}
 table {
     width: 90%;

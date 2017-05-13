@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>API VK</title>
+	<link href={{ url_for('static', filename='style1.css') }} rel='stylesheet'>
+</head>
+<body>
+	<div class='menu'>
+		<div class='btn-group'>
+			<a href={{ url_for('index') }} class='button2'>главная</a>
+			<a href={{ url_for('text') }} class='button2'>анализ глаголов в тексте</a>
+			<a href={{ url_for('apivk') }} class='active'>список словоформ группы VK</a>
+		</div>
+	</div>
+	<div class='main'>
+		<div class='content'>
+			<form method='post'>
+				<h2>Название группы (ID):</h2>
+				<input type='text' name='group_id'>
+				<br><br>
+				<input class='button' type='reset' value='Очистить'>
+				<input class='button' type='submit' value='Получить список'>
+			</form>
+			<i>Процесс может занять какое-то время.</i>
+		</div>
+		<div class='content'>
+			{% if is_closed %}
+				<h3>Закрытая группа!</h3>
+			{% elif lemmas %}
+				<h2>Самые частотные словоформы из последних постов группы:</h2>
+				<ol>
+					{% for lemm in lemmas %}
+						<li>{{ lemm }}</li>
+					{% endfor %}
+				</ol>
+			{% endif %}
+		</div>
+	</div>
+</body>
+</html>

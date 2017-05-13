@@ -1,30 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-    <meta charset="UTF-8">
+    <meta charset='UTF-8'>
     <title>Анализ глаголов</title>
-	<link href={{ url_for('static', filename='style1.css') }} rel="stylesheet">
+	<link href={{ url_for('static', filename='style1.css') }} rel='stylesheet'>
 </head>
 <body>
-	<div class="menu">
-		<div class="btn-group">
-			<a href={{ url_for('index') }} class="button2">главная</a>
-			<a href={{ url_for('text') }} class="active">анализ глаголов в тексте</a>
-			<a class="button2">VK API</a>
+	<div class='menu'>
+		<div class='btn-group'>
+			<a href={{ url_for('index') }} class='button2'>главная</a>
+			<a href={{ url_for('text') }} class='active'>анализ глаголов в тексте</a>
+			<a href={{ url_for('apivk') }} class='button2'>список словоформ группы VK</a>
 		</div>
 	</div>
-	<div class="main">
-		<div class="content">
+	<div class='main'>
+		<div class='content'>
 			<form method='post'>
 				<h2>Ваш текст:</h2>
-				<textarea rows="5" cols="80" name="text">{{ input }}</textarea>
+				<textarea rows='5' cols='80' name='text'>{{ input }}</textarea>
 				<br>
 				<input class='button' type='reset' value='Очистить'>
-				<input class='button' type="submit" value="Разобрать">
+				<input class='button' type='submit' value='Разобрать'>
 			</form>
 		</div>
-		<div class="content">
-			{% if num_verbs%}
+		<div class='content'>
+			{% if num_verbs %}
 				{% if num_verbs == 0 %}
 					В тексте нет глаголов.
 				{% endif %}
@@ -40,11 +40,11 @@
 						<br>Глаголов несовершенного вида: {{ impf_verbs }}
 					</p>
 					<h3>Список лемм глаголов:</h3>
-					<ul>
+					<ol>
 						{% for verb in verbs %}
 							<li>{{ verb }}</li>
 						{% endfor %}
-					</ul>
+					</ol>
 				{% endif %}
 			{% endif %}
 		</div>
