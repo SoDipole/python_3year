@@ -43,17 +43,25 @@ def vk_api(method, **kwargs):
 
 def get_lemmas_vk(group_id):
     lemmas = {}
-    posts = vk_api('wall.get', domain = group_id, count = 100)['response']
-    for i in range(1,len(posts)):
-        if posts[i]['text']:
-            ana = m.analyze(posts[i]['text'])
-            for item in ana:
-                if len(item) > 1 and len(item['analysis']) > 0:
-                    lemm = item['analysis'][0]['lex']
-                    if lemm in lemmas:
-                        lemmas[lemm] += 1
-                    else:
-                        lemmas[lemm] = 1
+    posts = vk_api('wall.get', domain = group_id)['response']
+    num_posts = posts[0]
+    if num_posts >= 1000:
+        off = 9
+    else:
+        off = num_posts // 100
+    while off >= 0:
+        posts = vk_api('wall.get', domain = group_id, count = 100, offset = off*100)['response']
+        off -= 1
+        for i in range(1,len(posts)):
+            if posts[i]['text']:
+                ana = m.analyze(posts[i]['text'])
+                for item in ana:
+                    if len(item) > 1 and len(item['analysis']) > 0:
+                        lemm = item['analysis'][0]['lex']
+                        if lemm in lemmas:
+                            lemmas[lemm] += 1
+                        else:
+                            lemmas[lemm] = 1
     lemmas = sorted(lemmas, key=lemmas.__getitem__, reverse=True)
     if len(lemmas) > 100:
         lemmas = lemmas[:100]
