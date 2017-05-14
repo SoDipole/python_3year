@@ -4,6 +4,31 @@
     <meta charset='UTF-8'>
     <title>API VK</title>
 	<link href={{ url_for('static', filename='style1.css') }} rel='stylesheet'>
+	
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart'], 'language': 'ru'});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Часть речи');
+        data.addColumn('number', 'Количество');
+        data.addRows([
+          {% for pos, num in data.items() %}
+              ['{{ pos }}', {{ num }}],
+          {% endfor %}
+        ]);
+
+        var options = {'title':'Части речи в последних постах',
+                       'width':700,
+                       'height':500,
+					   'colors':['#3E1255'],
+                       'legend': { position: "none" }};
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('colomnchart'));
+        chart.draw(data, options);
+      }
+    </script>
 </head>
 <body>
 	<div class='menu'>
@@ -29,6 +54,7 @@
 				<h3>Закрытая группа!</h3>
 			{% elif lemmas %}
 				<h2>Самые частотные словоформы из последних постов группы:</h2>
+				<div id='colomnchart' style='float: right'></div>
 				<ol>
 					{% for lemm in lemmas %}
 						<li>{{ lemm }}</li>

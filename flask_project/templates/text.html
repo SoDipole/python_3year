@@ -4,6 +4,28 @@
     <meta charset='UTF-8'>
     <title>Анализ глаголов</title>
 	<link href={{ url_for('static', filename='style1.css') }} rel='stylesheet'>
+	
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart'], 'language': 'ru'});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Часть речи',  						'вхождения'],
+          ['Глаголы',    					{{ num_verbs }}],
+          ['Другие части речи', {{ words }}-{{ num_verbs }}]
+        ]);
+
+        var options = {'title':'Доля глаголов в тексте',
+                       'width':600,
+                       'height':400,
+					   'colors':['#3E1255','#9874AA'],
+                       'legend': { position: "none" }};
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+      }
+    </script>
 </head>
 <body>
 	<div class='menu'>
@@ -30,8 +52,9 @@
 				{% endif %}
 				{% if num_verbs > 0 %}
 					<h2>Анализ глаголов в тексте:</h2>
+					<div id='piechart' style='float: right'></div>
 					<p>
-						Всего глаголов:  {{ num_verbs }} ( {{ part_verbs }}% )
+						Всего глаголов:  {{ num_verbs }}
 						<br>
 						<br>Переходных глаголов:  {{ tr_verbs }}
 						<br>Непереходных глаголов: {{ intr_verbs }}

@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import url_for, render_template, request
 from pymystem3 import Mystem
+from collections import defaultdict
 import re, requests, json
 
 app = Flask(__name__)
@@ -8,7 +9,7 @@ m = Mystem()
 
 def analyse_verbs(text):
     ana = m.analyze(text)
-    verbs = {}
+    verbs = defaultdict(int)
     words = num_verbs = part_verbs = tr_verbs = intr_verbs = pf_verbs = impf_verbs = 0
     for item in ana:
         if len(item) > 1:
@@ -17,10 +18,7 @@ def analyse_verbs(text):
                 if item['analysis'][0]['gr'].startswith('V'):
                     num_verbs += 1
                     lemm = item['analysis'][0]['lex']
-                    if lemm in verbs:
-                        verbs[lemm] += 1
-                    else:
-                        verbs[lemm] = 1
+                    verbs[lemm] += 1
                     trans = re.search('\,нп', item['analysis'][0]['gr'])
                     if trans:
                         intr_verbs += 1
@@ -34,7 +32,7 @@ def analyse_verbs(text):
     if words > 0:
         part_verbs = round(num_verbs*100/words, 2)
     verbs = sorted(verbs, key=verbs.__getitem__, reverse=True)
-    return verbs, num_verbs, part_verbs, tr_verbs, intr_verbs, pf_verbs, impf_verbs
+    return verbs, num_verbs, words, tr_verbs, intr_verbs, pf_verbs, impf_verbs
 
 def vk_api(method, **kwargs):
     api_request = 'https://api.vk.com/method/'+method + '?'
@@ -42,7 +40,8 @@ def vk_api(method, **kwargs):
     return json.loads(requests.get(api_request).text)
 
 def get_lemmas_vk(group_id):
-    lemmas = {}
+    lemmas = defaultdict(int)
+    pos_dict = defaultdict(int)
     posts = vk_api('wall.get', domain = group_id)['response']
     num_posts = posts[0]
     if num_posts >= 1000:
@@ -58,14 +57,13 @@ def get_lemmas_vk(group_id):
                 for item in ana:
                     if len(item) > 1 and len(item['analysis']) > 0:
                         lemm = item['analysis'][0]['lex']
-                        if lemm in lemmas:
-                            lemmas[lemm] += 1
-                        else:
-                            lemmas[lemm] = 1
+                        lemmas[lemm] += 1
+                        pos = item['analysis'][0]['gr'].split('=')[0].split(',')[0]
+                        pos_dict[pos] += 1
     lemmas = sorted(lemmas, key=lemmas.__getitem__, reverse=True)
     if len(lemmas) > 100:
         lemmas = lemmas[:100]
-    return lemmas
+    return lemmas, pos_dict
 
 @app.route('/')
 def index():
@@ -75,9 +73,9 @@ def index():
 def text():
     if request.form:
         text = request.form['text']
-        verbs, num_verbs, part_verbs, tr_verbs, intr_verbs, pf_verbs, impf_verbs = analyse_verbs(text)
+        verbs, num_verbs, words, tr_verbs, intr_verbs, pf_verbs, impf_verbs = analyse_verbs(text)
         return render_template('text.html', input = text, verbs = verbs, 
-                               num_verbs = num_verbs, part_verbs = part_verbs, 
+                               num_verbs = num_verbs, words = words, 
                                tr_verbs = tr_verbs, intr_verbs = intr_verbs, 
                                pf_verbs = pf_verbs, impf_verbs = impf_verbs)
     return render_template('text.html')
@@ -88,10 +86,10 @@ def apivk():
         group_id = request.form['group_id']
         is_closed = vk_api('groups.getById', group_id = group_id)['response'][0]['is_closed']
         if is_closed == 1:
-            return render_template('apivk.html', is_closed = is_closed)
-        lemmas = get_lemmas_vk(group_id)
-        return render_template('apivk.html', lemmas = lemmas)
-    return render_template('apivk.html')
+            return render_template('apivk.html', is_closed = is_closed, data={})
+        lemmas, pos_dict = get_lemmas_vk(group_id)
+        return render_template('apivk.html', lemmas = lemmas, data = pos_dict)
+    return render_template('apivk.html', data={})
 
 if __name__ == '__main__':
     app.run()
