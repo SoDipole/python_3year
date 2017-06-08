@@ -3,7 +3,7 @@
 <head>
     <meta charset='UTF-8'>
     <title>API VK</title>
-	<link href={{ url_for('static', filename='style1.css') }} rel='stylesheet'>
+	<link href={{ url_for('static', filename='style5.css') }} rel='stylesheet'>
 	
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
@@ -33,21 +33,20 @@
 <body>
 	<div class='menu'>
 		<div class='btn-group'>
-			<a href={{ url_for('index') }} class='button2'>главная</a>
-			<a href={{ url_for('text') }} class='button2'>анализ глаголов в тексте</a>
-			<a href={{ url_for('apivk') }} class='active'>список словоформ группы VK</a>
+			<a href={{ url_for('index') }} class='button2'>Главная</a>
+			<a href={{ url_for('text') }} class='button2'>Анализ глаголов</a>
+			<a href={{ url_for('apivk') }} class='active'>API VK</a>
+			<a href={{ url_for('chatbot') }} class='button2'>Чат-бот</a>
 		</div>
 	</div>
 	<div class='main'>
 		<div class='content'>
 			<form method='post'>
-				<h2>Название группы (ID):</h2>
+				<h2>Название группы VK (ID):</h2>
 				<input type='text' name='group_id'>
 				<br><br>
-				<input class='button' type='reset' value='Очистить'>
-				<input class='button' type='submit' value='Получить список'>
+				<input class='button' type='submit' value='Получить список словоформ'>
 			</form>
-			<i>Процесс может занять какое-то время.</i>
 		</div>
 		<div class='content'>
 			{% if is_closed %}

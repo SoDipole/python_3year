@@ -2,10 +2,12 @@ from flask import Flask
 from flask import url_for, render_template, request
 from pymystem3 import Mystem
 from collections import defaultdict
-import re, requests, json
+import re, requests, json, os, random, pymorphy2
+#from nltk import word_tokenize
 
 app = Flask(__name__)
 m = Mystem()
+morph = pymorphy2.MorphAnalyzer()
 
 def analyse_verbs(text):
     ana = m.analyze(text)
@@ -65,6 +67,46 @@ def get_lemmas_vk(group_id):
         lemmas = lemmas[:100]
     return lemmas, pos_dict
 
+def get_words():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    file_url = os.path.join(SITE_ROOT, 'static', 'word_list.txt')    
+    file = open(file_url, 'r', encoding = 'utf-8')
+    word_list = file.read().split('\n')
+    file.close()
+    word_dict = {}
+    for word in word_list:
+        prop = morph.cyr2lat(morph.parse(word)[0].tag.cyr_repr).split()[0]
+        word_dict[word] = prop
+    return word_dict
+
+def make_bot_line(line):
+    word_dict = get_words()
+    bot_words = []
+    bot_line = ''
+    pattern = re.compile("^[А-ЯЁа-яё]+?\-?[а-яё]*$")
+    for word1 in line.split():
+    #for word1 in word_tokenize(line):
+        word1 = word1.strip('.,!?:-;#$%*()"@')
+        if pattern.match(word1):
+            tag = morph.parse(word1)[0].tag
+            tag_string = morph.cyr2lat(tag.cyr_repr).split()
+            words = [w for w, p in word_dict.items() if p == tag_string[0]]
+            if len(words) == 0:
+                pos = tag.POS
+                words = [w for w, p in word_dict.items() if p.split(',')[0] == pos]
+            lem2 = morph.parse(random.choice(words))[0]
+            if len(tag_string) > 1:
+                form = set((tag_string[1]).split(','))   
+                for f in form:
+                    if lem2.inflect(form):
+                        lem2 = lem2.inflect(form)
+            word2 = lem2.word
+            bot_words.append(word2)
+        else:
+            bot_words.append(word1)
+    bot_line = ' '.join(bot_words)
+    return bot_line
+        
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -90,6 +132,14 @@ def apivk():
         lemmas, pos_dict = get_lemmas_vk(group_id)
         return render_template('apivk.html', lemmas = lemmas, data = pos_dict)
     return render_template('apivk.html', data={})
+
+@app.route('/chatbot', methods = ['POST', 'GET'])
+def chatbot():
+    if request.form:
+        line = request.form['line']
+        bot_line = make_bot_line(line)
+        return render_template('chatbot.html', bot_line = bot_line)
+    return render_template('chatbot.html')
 
 if __name__ == '__main__':
     app.run()

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Чат-бот</title>
+	<link href={{ url_for('static', filename='style5.css') }} rel='stylesheet'>
+</head>
+<body>
+	<div class='menu'>
+		<div class='btn-group'>
+			<a href={{ url_for('index') }} class='button2'>Главная</a>
+			<a href={{ url_for('text') }} class='button2'>Анализ глаголов</a>
+			<a href={{ url_for('apivk') }} class='button2'>API VK</a>
+			<a href={{ url_for('chatbot') }} class='active'>Чат-бот</a>
+		</div>
+	</div>
+	<div class='main'>
+		<div class='content'>
+			<form method='post'>
+				<h2>Введите предложение:</h2>
+				<input type='text' name='line'>
+				<br><br>
+				<input class='button' type='submit' value='Сказать'>
+			</form>
+		</div>
+		<div class='content'>
+			{% if bot_line %}
+				<h2>Ответ:</h2>
+				<p>
+					{{ bot_line }}
+				</p>
+			{% endif %}
+		</div>
+	</div>
+</body>
+</html>

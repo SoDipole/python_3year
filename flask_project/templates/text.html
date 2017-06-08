@@ -3,7 +3,7 @@
 <head>
     <meta charset='UTF-8'>
     <title>Анализ глаголов</title>
-	<link href={{ url_for('static', filename='style1.css') }} rel='stylesheet'>
+	<link href={{ url_for('static', filename='style5.css') }} rel='stylesheet'>
 	
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
@@ -30,9 +30,10 @@
 <body>
 	<div class='menu'>
 		<div class='btn-group'>
-			<a href={{ url_for('index') }} class='button2'>главная</a>
-			<a href={{ url_for('text') }} class='active'>анализ глаголов в тексте</a>
-			<a href={{ url_for('apivk') }} class='button2'>список словоформ группы VK</a>
+			<a href={{ url_for('index') }} class='button2'>Главная</a>
+			<a href={{ url_for('text') }} class='active'>Анализ глаголов</a>
+			<a href={{ url_for('apivk') }} class='button2'>API VK</a>
+			<a href={{ url_for('chatbot') }} class='button2'>Чат-бот</a>
 		</div>
 	</div>
 	<div class='main'>
@@ -40,9 +41,8 @@
 			<form method='post'>
 				<h2>Ваш текст:</h2>
 				<textarea rows='5' cols='80' name='text'>{{ input }}</textarea>
-				<br>
-				<input class='button' type='reset' value='Очистить'>
-				<input class='button' type='submit' value='Разобрать'>
+				<br><br>
+				<input class='button' type='submit' value='Проанализировать глаголы'>
 			</form>
 		</div>
 		<div class='content'>

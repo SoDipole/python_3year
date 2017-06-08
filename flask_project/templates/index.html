@@ -3,14 +3,15 @@
 <head>
     <meta charset='UTF-8'>
     <title>Главная страница</title>
-	<link href={{ url_for('static', filename='style1.css') }} rel='stylesheet'>
+	<link href={{ url_for('static', filename='style5.css') }} rel='stylesheet'>
 </head>
 <body>
 	<div class='menu'>
 		<div class='btn-group'>
-			<a href={{ url_for('index') }} class='active'>главная</a>
-			<a href={{ url_for('text') }} class='button2'>анализ глаголов в тексте</a>
-			<a href={{ url_for('apivk') }} class='button2'>список словоформ группы VK</a>
+			<a href={{ url_for('index') }} class='active'>Главная</a>
+			<a href={{ url_for('text') }} class='button2'>Анализ глаголов</a>
+			<a href={{ url_for('apivk') }} class='button2'>API VK</a>
+			<a href={{ url_for('chatbot') }} class='button2'>Чат-бот</a>
 		</div>
 	</div>
 	<div class='main'>
